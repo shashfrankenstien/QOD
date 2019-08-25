@@ -16,7 +16,7 @@ pip install -U git+https://github.com/shashfrankenstien/QOD.git
 ```sh
 $ qod
 $ qod latest
-$ qod -s
+$ qod -h
 ```
 
 > Cherrypy Server + TaskScheduler

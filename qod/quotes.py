@@ -1,6 +1,6 @@
 import requests
 import random
-import argparse
+import re
 
 headers = {
 	'Host': 'api.quotery.com',
@@ -18,20 +18,36 @@ sorts = dict(
 	popular = 'poplar',
 )
 
+
+def cleanhtml(raw_html):
+	cleanr = re.compile('<.*?>')
+	cleantext = re.sub(cleanr, '', raw_html)
+	cleantext = cleantext.replace("&nbsp;", " ")
+	cleantext = cleantext.replace("&amp;", "&")
+	return cleantext
+
+
 def quote(sort):
 	r = requests.get(url.format(sort=sort), headers=headers)
 	j = random.choice(r.json())
-	return ' '.join([j['body'], "-", j['author']['name']])
+	return cleanhtml(' '.join([j['body'], "-", j['author']['name']]))
 
 
 def _cli():
+	import argparse, textwrap
 	parser = argparse.ArgumentParser()
 	parser.add_argument("type", nargs='?', help="Type of quote (optional)", choices=sorts.keys(), default='random')
+	parser.add_argument("-w", "--width", nargs='?', help="Width to print", type=int, default=80)
 	parser.add_argument("-s", "--silent", help="Don't print errors", action="store_true")
+	parser.add_argument("-p", "--plain", help="Exclude leading and lagging decorations", action="store_true")
 	args = parser.parse_args()
 
+	width = min(150, max(40, args.width))
 	try:
-		print(quote(sort=sorts.get(args.type, 'random')))
+		q = quote(sort=sorts.get(args.type, 'random'))
+		if not args.plain: print(''.join(["="]*width))
+		print(textwrap.fill(q, width))
+		if not args.plain: print(''.join(["="]*width))
 	except Exception as e:
 		if not args.silent:
 			print(e)

@@ -7,7 +7,7 @@ setup(
 	author_email='shashank.gopikrishna@gmail.com',
 	packages=['qod'],
 	install_requires=['requests'],
-	 entry_points = {
+	entry_points = {
 		'console_scripts': ['qod=qod.quotes:_cli'],
 	},
 	description='Quotes from www.quotery.com (with CLI)',

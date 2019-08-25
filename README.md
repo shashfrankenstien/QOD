@@ -19,7 +19,7 @@ $ qod latest
 $ qod -h
 ```
 
-> Cherrypy Server + TaskScheduler
+> The Package
 ```py
 import qod
 

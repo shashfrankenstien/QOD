@@ -27,7 +27,7 @@ def cleanhtml(raw_html):
 	return cleantext
 
 
-def quote(sort):
+def quote(sort='random'):
 	r = requests.get(url.format(sort=sort), headers=headers)
 	j = random.choice(r.json())
 	return cleanhtml(' '.join([j['body'], "-", j['author']['name']]))

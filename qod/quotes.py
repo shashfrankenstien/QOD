@@ -38,19 +38,22 @@ def _cli():
 	parser = argparse.ArgumentParser()
 	parser.add_argument("type", nargs='?', help="Type of quote (optional)", choices=sorts.keys(), default='random')
 	parser.add_argument("-w", "--width", nargs='?', help="Width to print", type=int, default=80)
-	parser.add_argument("-s", "--silent", help="Don't print errors", action="store_true")
+	parser.add_argument("-s", "--silent", help="Silently fail on error", action="store_true")
 	parser.add_argument("-p", "--plain", help="Exclude leading and lagging decorations", action="store_true")
 	args = parser.parse_args()
 
 	width = min(150, max(40, args.width))
 	try:
 		q = quote(sort=sorts.get(args.type, 'random'))
-		if not args.plain: print(''.join(["="]*width))
-		print(textwrap.fill(q, width))
-		if not args.plain: print(''.join(["="]*width))
+		q = textwrap.fill(q, width)
 	except Exception as e:
-		if not args.silent:
-			print(e)
+		if args.silent:
+			return 0
+		else:
+			q = "qod error: " + str(e)
+	if not args.plain: print(''.join(["="]*width))
+	print(q)
+	if not args.plain: print(''.join(["="]*width))
 
 
 if __name__ == "__main__":

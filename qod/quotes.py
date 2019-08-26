@@ -10,12 +10,12 @@ headers = {
 	'Referer': 'https://www.quotery.com/quotes',
 	'Origin': 'https://www.quotery.com',
 }
-url = 'https://api.quotery.com/wp-json/quotery/v1/quotes?orderby={sort}&page=1&per_page=50'
+url = 'https://api.quotery.com/wp-json/quotery/v1/quotes?orderby={sort}&page=1&per_page={count}'
 
 sorts = dict(
-	random = 'random',
-	latest = 'latest',
-	popular = 'poplar',
+	random = ('random', 1),
+	latest = ('latest', 20),
+	popular = ('poplar', 80),
 )
 
 
@@ -27,8 +27,9 @@ def cleanhtml(raw_html):
 	return cleantext
 
 
-def quote(sort='random'):
-	r = requests.get(url.format(sort=sort), headers=headers)
+def quote(sort=''):
+	sort, count = sorts.get(sort) or sort['random']
+	r = requests.get(url.format(sort=sort, count=count), headers=headers)
 	j = random.choice(r.json())
 	return cleanhtml(' '.join([j['body'], "-", j['author']['name']]))
 
@@ -58,7 +59,7 @@ def _cli():
 		channel.put(q)
 
 	chan = Queue()
-	p = Process(target=_proc, args=(chan, sorts.get(args.type, 'random')))
+	p = Process(target=_proc, args=(chan, args.type))
 	p.daemon = True
 	try:
 		p.start()

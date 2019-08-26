@@ -50,11 +50,11 @@ def _cli():
 
 	def _proc(channel, sort):
 		try:
-			q = quote(sort=sort)
+			q = {'success': quote(sort=sort)}
 		except requests.ConnectionError:
-			q = "qod error: Network connection not available"
+			q = {'error':"Network connection not available"}
 		except Exception as e:
-			q = "qod error: " + str(e)
+			q = {'error': str(e)}
 		channel.put(q)
 
 	chan = Queue()
@@ -64,6 +64,10 @@ def _cli():
 		p.start()
 		q = chan.get(timeout=args.timeout)
 		p.join()
+		if 'error' in q:
+			raise Exception(q['error'])
+		else:
+			q = q['success']
 	except Empty:
 		p.terminate()
 		if args.silent:

@@ -13,7 +13,7 @@ headers = {
 url = 'https://api.quotery.com/wp-json/quotery/v1/quotes?orderby={sort}&page=1&per_page={count}'
 
 sorts = dict(
-	random = ('random', 1),
+	random = ('random', 20),
 	latest = ('latest', 20),
 	popular = ('poplar', 80),
 )
@@ -34,6 +34,18 @@ def quote(sort=''):
 	return cleanhtml(' '.join([j['body'], "-", j['author']['name']]))
 
 
+class _cli_proc():
+	@staticmethod
+	def run(channel, sort):
+		try:
+			q = {'success': quote(sort=sort)}
+		except requests.ConnectionError:
+			q = {'error':"Network connection not available"}
+		except Exception as e:
+			q = {'error': str(e)}
+		channel.put(q)
+
+
 def _cli():
 	import argparse, textwrap, time
 	from multiprocessing import Process, Queue
@@ -49,18 +61,11 @@ def _cli():
 
 	width = min(150, max(40, args.width))
 
-	def _proc(channel, sort):
-		try:
-			q = {'success': quote(sort=sort)}
-		except requests.ConnectionError:
-			q = {'error':"Network connection not available"}
-		except Exception as e:
-			q = {'error': str(e)}
-		channel.put(q)
+
 
 	chan = Queue()
-	p = Process(target=_proc, args=(chan, args.type))
-	p.daemon = True
+	p = Process(target=_cli_proc.run, args=(chan, args.type))
+	# p.daemon = True
 	try:
 		p.start()
 		q = chan.get(timeout=args.timeout)
@@ -70,7 +75,6 @@ def _cli():
 		else:
 			q = q['success']
 	except Empty:
-		p.terminate()
 		if args.silent:
 			return 0
 		else:
@@ -80,6 +84,11 @@ def _cli():
 			return 0
 		else:
 			q = "qod error: " + str(e)
+	finally:
+		if p.is_alive():
+			p.terminate()
+		else:
+			p.join()
 	if not args.plain: print(''.join(["="]*width))
 	print(textwrap.fill(q, width))
 	if not args.plain: print(''.join(["="]*width))

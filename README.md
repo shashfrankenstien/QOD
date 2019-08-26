@@ -5,9 +5,16 @@ Quotes from www.quotery.com (with CLI)
 
 ## Installation
 
+- Latest
 ```sh
 pip install -U git+https://github.com/shashfrankenstien/QOD.git
 ```
+
+- v1.0.0
+```sh
+pip install -U git+https://github.com/shashfrankenstien/QOD.git@v1.0.0
+```
+
 
 
 ## Usage example
@@ -22,6 +29,5 @@ $ qod -h
 > The Package
 ```py
 import qod
-
 print(qod.quote())
 ```

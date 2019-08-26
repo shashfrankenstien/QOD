@@ -34,22 +34,42 @@ def quote(sort='random'):
 
 
 def _cli():
-	import argparse, textwrap
+	import argparse, textwrap, time
+	from multiprocessing import Process, Queue
+	from queue import Empty
+
 	parser = argparse.ArgumentParser()
 	parser.add_argument("type", nargs='?', help="Type of quote (optional)", choices=sorts.keys(), default='random')
-	parser.add_argument("-w", "--width", nargs='?', help="Width to print", type=int, default=80)
+	parser.add_argument("-w", "--width", help="Output print width", type=int, default=80)
+	parser.add_argument("-t", "--timeout", help="Request timeout", type=float, default=1.2)
 	parser.add_argument("-s", "--silent", help="Silently fail on error", action="store_true")
 	parser.add_argument("-p", "--plain", help="Exclude leading and lagging decorations", action="store_true")
 	args = parser.parse_args()
 
 	width = min(150, max(40, args.width))
+
+	def _proc(channel, sort):
+		try:
+			q = quote(sort=sort)
+		except requests.ConnectionError:
+			q = "qod error: Network connection not available"
+		except Exception as e:
+			q = "qod error: " + str(e)
+		channel.put(q)
+
+	chan = Queue()
+	p = Process(target=_proc, args=(chan, sorts.get(args.type, 'random')))
+	p.daemon = True
 	try:
-		q = quote(sort=sorts.get(args.type, 'random'))
-	except requests.ConnectionError:
+		p.start()
+		q = chan.get(timeout=args.timeout)
+		p.join()
+	except Empty:
+		p.terminate()
 		if args.silent:
 			return 0
 		else:
-			q = "qod error: Network connection not available"
+			q = "qod error: " + "Network timeout"
 	except Exception as e:
 		if args.silent:
 			return 0

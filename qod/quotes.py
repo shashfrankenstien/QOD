@@ -45,14 +45,18 @@ def _cli():
 	width = min(150, max(40, args.width))
 	try:
 		q = quote(sort=sorts.get(args.type, 'random'))
-		q = textwrap.fill(q, width)
+	except requests.ConnectionError:
+		if args.silent:
+			return 0
+		else:
+			q = "qod error: Network connection not available"
 	except Exception as e:
 		if args.silent:
 			return 0
 		else:
 			q = "qod error: " + str(e)
 	if not args.plain: print(''.join(["="]*width))
-	print(q)
+	print(textwrap.fill(q, width))
 	if not args.plain: print(''.join(["="]*width))
 
 

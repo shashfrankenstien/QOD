@@ -10,7 +10,7 @@ headers = {
 	'Referer': 'https://www.quotery.com/quotes',
 	'Origin': 'https://www.quotery.com',
 }
-url = 'https://api.quotery.com/wp-json/quotery/v1/quotes?orderby={sort}&page=1&per_page=100'
+url = 'https://api.quotery.com/wp-json/quotery/v1/quotes?orderby={sort}&page=1&per_page=50'
 
 sorts = dict(
 	random = 'random',

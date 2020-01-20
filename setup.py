@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
 	name='qod',
-	version='1.0.2',
+	version='1.0.3',
 	author='Shashank Gopikrishna',
 	author_email='shashank.gopikrishna@gmail.com',
 	packages=['qod'],

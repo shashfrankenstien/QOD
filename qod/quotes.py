@@ -50,16 +50,18 @@ def _cli():
 	import argparse, textwrap, time
 	from multiprocessing import Process, Queue
 	from queue import Empty
+	import shutil
+	terminal_size = shutil.get_terminal_size(fallback=(80, 25))
 
 	parser = argparse.ArgumentParser()
 	parser.add_argument("type", nargs='?', help="Type of quote (optional)", choices=sorts.keys(), default='random')
-	parser.add_argument("-w", "--width", help="Output print width", type=int, default=80)
+	parser.add_argument("-w", "--width", help="Output print width", type=int, default=terminal_size.columns)
 	parser.add_argument("-t", "--timeout", help="Request timeout", type=float, default=1.2)
 	parser.add_argument("-s", "--silent", help="Silently fail on error", action="store_true")
 	parser.add_argument("-p", "--plain", help="Exclude leading and lagging decorations", action="store_true")
 	args = parser.parse_args()
 
-	width = min(150, max(40, args.width))
+	width = min(terminal_size.columns, max(20, args.width))
 
 
 
@@ -89,8 +91,10 @@ def _cli():
 			p.terminate()
 		else:
 			p.join()
+
+	op = "\n".join([l.center(width) for l in  textwrap.wrap(q, width)])
 	if not args.plain: print(''.join(["="]*width))
-	print(textwrap.fill(q, width))
+	print(op)
 	if not args.plain: print(''.join(["="]*width))
 
 

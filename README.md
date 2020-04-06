@@ -21,13 +21,18 @@ pip install -U git+https://github.com/shashfrankenstien/QOD.git@v1.0.0
 
 > CLI
 ```sh
-$ qod
-$ qod latest
-$ qod -h
+qod
+qod latest
+qod -h
 ```
 
-> The Package
+> Python Package
 ```py
 import qod
 print(qod.quote())
+```
+
+> cowsay
+```sh
+qod -p | cowsay
 ```

@@ -33,7 +33,7 @@ print(qod.quote())
 ```
 
 > cowsay
-```sh
+```
 qod --plain | cowsay
 
  ______________________________________

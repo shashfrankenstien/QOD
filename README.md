@@ -23,7 +23,7 @@ pip install -U git+https://github.com/shashfrankenstien/QOD.git@v1.0.0
 ```sh
 qod
 qod latest
-qod -h
+qod --help
 ```
 
 > Python Package
@@ -34,5 +34,16 @@ print(qod.quote())
 
 > cowsay
 ```sh
-qod -p | cowsay
+qod --plain | cowsay
+
+ ______________________________________
+/ We don’t have to be smarter than the \
+| rest. We have to be more disciplined |
+\ than the rest. - Warren Buffett      /
+ --------------------------------------
+        \   ^__^
+         \  (oo)\_______
+            (__)\       )\/\
+                ||----w |
+                ||     ||
 ```

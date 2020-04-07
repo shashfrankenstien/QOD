@@ -92,10 +92,13 @@ def _cli():
 		else:
 			p.join()
 
-	op = "\n".join([l.center(width) for l in  textwrap.wrap(q, width)])
-	if not args.plain: print(''.join(["="]*width))
-	print(op)
-	if not args.plain: print(''.join(["="]*width))
+
+	if args.plain:
+		print(q)
+	else:
+		print(''.join(["="]*width))
+		print("\n".join([l.center(width) for l in  textwrap.wrap(q, width)]))
+		print(''.join(["="]*width))
 
 
 if __name__ == "__main__":

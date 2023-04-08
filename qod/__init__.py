@@ -1,4 +1,4 @@
-try:
-	from .quotes import sorts, quote
-except:
-	from quotes import sorts, quote
+__version__ = "2.0.0"
+
+from .quotes import quote
+
